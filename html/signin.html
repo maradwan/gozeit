@@ -1,0 +1,94 @@
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-171656329-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-171656329-1');
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Sign in Page</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="css/my-login.css">
+</head>
+<body class="my-login-page">
+	<section class="h-100">
+		<div class="container h-100">
+			<div class="row justify-content-md-center h-100">
+				<div class="card-wrapper">
+					<div class="brand">
+						<img src="img/logo.jpg" alt="bootstrap 4 login page">
+					</div>
+					<div class="card fat">
+						<div class="card-body">
+
+							<div id="message-registration" style="display: none;" class="modal-body">     
+								<p class="text-warning">Registration successful. Please check your email inbox or spam folder for your verification</p>
+							   </div>
+
+
+							<h4 class="card-title">Sign In</h4>
+                                                               <form id="signinForm">
+								<div class="form-group">
+									<label for="email">E-Mail Address</label>
+									<input id="emailInputSignin" type="email" class="form-control" name="email" required>
+									<div class="invalid-feedback">
+										Your email is invalid
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label for="password">Password</label>
+									<input id="passwordInputSignin" type="password" class="form-control" name="password" required data-eye>
+									<div class="invalid-feedback">
+										Password is required
+									</div>
+								</div>
+
+
+								<div class="form-group m-0">
+									<button type="submit" class="btn btn-primary btn-block">
+										Sign in
+									</button>
+								</div>
+								<div class="mt-4 text-center">
+									Don't have an account? <a href="signup.html">Register</a>
+
+								</div>
+								<div class="mt-4 text-center">
+									Forgot account? <a href="reset.html">Reset Password</a>
+								</div>
+
+
+
+
+							</form>
+						</div>
+					</div>
+					<div class="footer">
+						 2020  GoZeit 
+					</div>
+					<div class="mt-4 text-center">
+						This App Based on AWS Serverless <a href="architecture.html">Architecture</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"  crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"  crossorigin="anonymous"></script>
+	<script src="js/my-login.js"></script>
+
+        <script src="js/vendor/aws-cognito-sdk.min.js"></script>
+        <script src="js/vendor/amazon-cognito-identity.min.js"></script>
+        <script src="js/config.js"></script>
+        <script src="js/cognito-auth.js"></script>
+</body>
+</html>
