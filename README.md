@@ -8,7 +8,7 @@
 * [API Gateway]
 * [S3]
 * [Cloudwatch]
-* [CloudFront]
+* [Cloudfront]
 * [SES]
 * [ECS]
 
