@@ -52,13 +52,15 @@ def delete_records(email,account=False):
             'item' : items['Items'][i]['item']
             }
             )
-    ## Delete All files from S3
-    #s3 = boto3.resource('s3')
-    #if email:
-    #    bucket = s3.Bucket(s3_bucket)
-    #    key= 'customers/' + email + '/'
-    #    for obj in bucket.objects.filter(Prefix=key):
-    #        s3.Object(bucket.name,obj.key).delete()
+    return True
+
+## Delete All files from S3
+def delete_all_files(email):
+    s3 = boto3.resource('s3', region_name= region_name, verify=False)
+    bucket = s3.Bucket(s3_bucket)
+    key= 'customers/' + email + '/'
+    for obj in bucket.objects.filter(Prefix=key):
+        s3.Object(bucket.name,obj.key).delete()
     return True
 
 def update_record(email,item,update_item):

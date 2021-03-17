@@ -10,7 +10,6 @@
 * [Cloudwatch]
 * [Cloudfront]
 * [SES]
-* [ECS]
 
 ### Demo
        https://app.gozeit.com/

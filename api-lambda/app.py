@@ -6,8 +6,7 @@ import simplejson as json
 from os import environ as env
 import stripe
 from controller.auth import gen_time, token_email
-from controller.ecs import run_ecs
-from controller.models import get_record, get_records, add_record, delete_record, delete_records, update_record, webhook_url, update_subscription, user_group_update, update_group_record, update_group ,user_group_update_creator ,user_group_update_member, user_group_update_admin
+from controller.models import delete_all_files, get_record, get_records, add_record, delete_record, delete_records, update_record, webhook_url, update_subscription, user_group_update, update_group_record, update_group ,user_group_update_creator ,user_group_update_member, user_group_update_admin
 from uuid import uuid4
 
 global_group_limit = env.get("GROUP_LIMIT")
@@ -17,6 +16,9 @@ source_email = env.get("SOURCE_EMAIL")
 group_subject_permission = env.get("GROUP_SUBJECT_PERMISSION")
 group_subject_invitation = env.get("GROUP_SUBJECT_INVITATION")
 item_limit = env.get("LIMIT")
+UserPoolId = env.get("USERPOOLID")
+s3_bucket = env.get("S3_BUCKET")
+subj_remove_account = env.get("SUBJ_REMOVE_ACCOUNT")
 
 stripe_keys = {
   'secret_key': env.get("STRIPE_SECRET_KEY"),
@@ -25,7 +27,6 @@ stripe_keys = {
 
 stripe.api_key = stripe_keys["secret_key"]
 region_name  = env.get("REGION_NAME")
-s3_bucket = 'gozeit'
 
 app = Flask(__name__)
 CORS(app)
@@ -589,8 +590,15 @@ def user_account():
 def delete_account():
     email = token_email()
     try:
-        event = { 'email': email, 'request' : 'remove_account', 'item': '','s3_key_file': '' }
-        run_ecs(event)
+        cognito = boto3.client('cognito-idp',region_name = region_name, verify=False)
+        cognito.admin_delete_user(
+            UserPoolId= UserPoolId,
+            Username= email
+            )
+        delete_records(email, account=True)
+        delete_all_files(email)
+        msg = message_body_deleted_account(email)
+        notification(email, msg, subj_remove_account)
         return jsonify('Removing account has been requested'),200
     except:
         return jsonify('Misunderstood Request'),400
@@ -638,16 +646,13 @@ def delete_item(item):
   try:
       response = get_record(email,item)
       if 'filename' in response[0]:
-          #s3 = boto3.resource('s3')
+          s3 = boto3.resource('s3',region_name= region_name, verify=False)
           item = response[0]['item']
           filename = response[0]['filename']
           s3_key_file= 'customers/' + email + '/' +  item + '_' + filename
-          event = { 'email': email, 'request' : 'remove_s3_file', 'item': item, 's3_key_file': s3_key_file }
-          run_ecs(event)
-          #file_remove = s3.Object(s3_bucket,s3_key_file)
-          #file_remove.delete()
+          file_remove = s3.Object(s3_bucket, s3_key_file)
+          file_remove.delete()
       delete_record(email,item)
-
       return jsonify("Deleted: {}".format(item)),200
   except:
       return jsonify('Misunderstood Request'),400
@@ -685,7 +690,15 @@ def date_subscription():
     notify_date = notify.strftime("%Y-%m-%d")
     return notify_date,subscription_end_date
 
+def message_body_deleted_account(email):
+    return """Hello!
 
+We deleted your account {} as requested.
+
+Thank you.
+
+Best Regards,
+Gozeit Team""".format(email)
 
 def msg_group_permission(group_name,permission):
     return """Hello!
